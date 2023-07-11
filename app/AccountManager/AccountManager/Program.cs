@@ -32,7 +32,7 @@ builder.Services.AddDbContext<GameDbContext>(o=>
 builder.Services.AddControllersWithViews();
 
 // allow this app to run in a lambda
-builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.ApplicationLoadBalancer);
 
 // make authentication service available to dependency injection
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
