@@ -1,0 +1,12 @@
+
+Parameters:
+  GitBranch:
+    Type: String
+    Description: GitHub repository branch
+
+Resources:
+
+  PipelineArtifactsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'accountmanager-${GitBranch}-pipeline-artifacts-bucket'

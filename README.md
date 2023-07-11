@@ -18,6 +18,8 @@ The deploy script will make the appropriate AWS CLI calls to install the applica
 
 Create a codestar connection to monitor the github repository (if you have never connected a github repo to your AWS account before) : https://docs.aws.amazon.com/dtconsole/latest/userguide/connections-create-github.html
 
+Create an SSM parameter with the name `/app/AccountManager/CodestarConnectionArn` and put the arn of the codestar connection in it
+
 # Application Setup
 
 To install or run the application, the database must be configured.  Running the entity framework migration tool as described below will create and configure the database tables.

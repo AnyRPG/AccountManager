@@ -1,30 +1,45 @@
 
 Parameters:
+  GitBranch:
+    Type: String
+    Description: GitHub repository branch
   GitOwner:
     Type: String
     Description: GitHub repository owner
   GitRepo:
     Type: String
     Description: GitHub repository name
+  CodestarConnectionArn:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /app/AccountManager/CodestarConnectionArn
+    Description: codestar connection to github
 
 Resources:
 
-  AccountManagerBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: AccountManager-bucket
+  # AccountManagerBucket:
+  #   Type: AWS::S3::Bucket
+  #   Properties:
+  #     BucketName: accountmanager-application-bucket
 
   AccountManagerLambda:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        S3Bucket: !Ref AccountManagerBucket
+#        S3Bucket: !Ref AccountManagerBucket
+        S3Bucket: !Sub 'accountmanager-${GitBranch}-pipeline-artifacts-bucket'
         S3Key: AccountManager.zip
+      FunctionName: AccountManager
       Handler: AccountManager
-      Runtime: dotnetcore6.0
+      Runtime: dotnet6
       Timeout: 60
       MemorySize: 256
       Role: !GetAtt AccountManagerLambdaExecutionRole.Arn
+
+  AccountManagerLambdaURL:
+    Type: AWS::Lambda::Url
+    Properties: 
+      AuthType: NONE
+      TargetFunctionArn: !GetAtt AccountManagerLambda.Arn
 
   AccountManagerLambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -54,9 +69,9 @@ Resources:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       ArtifactStore:
-        Location: !Ref PipelineArtifactsBucket
+        Location: !Sub 'accountmanager-${GitBranch}-pipeline-artifacts-bucket'
         Type: S3
-      Name: MyCodePipeline
+      Name: !Sub 'AccountManager-${GitBranch}'
       RoleArn: !GetAtt CodePipelineServiceRole.Arn
       Stages:
         - Name: Source
@@ -64,17 +79,34 @@ Resources:
             - Name: SourceAction
               ActionTypeId:
                 Category: Source
-                Owner: ThirdParty
+                Owner: AWS
                 Version: 1
-                Provider: GitHub
+                Provider: CodeStarSourceConnection
               OutputArtifacts:
                 - Name: SourceOutput
               Configuration:
-                Owner: !Ref GitOwner
-                Repo: !Ref GitRepo
-                Branch: master
+                ConnectionArn: !Ref CodestarConnectionArn
+                FullRepositoryId: !Sub '${GitOwner}/${GitRepo}'
+                BranchName: master
               RunOrder: 1
-        - Name: Build
+        - Name: UpdatePipeline
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              InputArtifacts:
+                - Name: SourceOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub 'AccountManager-${GitBranch}'
+                Capabilities: CAPABILITY_IAM
+                TemplatePath: 'SourceArtifact::cfn/pipeline.yaml'
+                RoleArn: !GetAtt CodePipelineServiceRole.Arn
+              RunOrder: 3
+        - Name: BuildandDeploy
           Actions:
             - Name: BuildAction
               ActionTypeId:
@@ -89,24 +121,11 @@ Resources:
               Configuration:
                 ProjectName: !Ref CodeBuildProject
               RunOrder: 2
-        - Name: Deploy
-          Actions:
-            - Name: DeployAction
-              ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Version: 1
-                Provider: Lambda
-              InputArtifacts:
-                - Name: BuildOutput
-              Configuration:
-                FunctionName: !Ref AccountManagerLambda
-              RunOrder: 3
 
-  PipelineArtifactsBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: AccountManager-pipeline-artifacts-bucket
+  # PipelineArtifactsBucket:
+  #   Type: AWS::S3::Bucket
+  #   Properties:
+  #     BucketName: accountmanager-pipeline-artifacts-bucket
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
@@ -129,10 +148,14 @@ Resources:
                 dotnet: 6.0
             build:
               commands:
-                - dotnet build AccountManager.csproj
+                - dotnet build app/AccountManager/AccountManager/AccountManager.csproj
+                - (cd app/AccountManager/AccountManager/bin/Debug/net6.0/ && zip -r AccountManager.zip .)
+            post_build:
+              commands:
+                - aws s3 cp AccountManager.zip s3://accountmanager-master-pipeline-artifacts-bucket/AccountManager.zip
           artifacts:
             files:
-              - AccountManager/bin/Debug/net6.0/AccountManager.zip
+              - app/AccountManager/AccountManager/bin/Debug/net6.0/AccountManager.zip
 
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
@@ -144,6 +167,7 @@ Resources:
             Principal:
               Service: codepipeline.amazonaws.com
             Action: sts:AssumeRole
+      RoleName: !Sub 'AccountManager-${GitBranch}-CodePipelineServiceRole'
       Policies:
         - PolicyName: CodePipelineServiceRolePolicy
           PolicyDocument:
@@ -155,16 +179,20 @@ Resources:
                   - s3:PutObject
                   - s3:ListBucket
                 Resource:
-                  - !Sub 'arn:aws:s3:::${PipelineArtifactsBucket}/*'
-                  - !Sub 'arn:aws:s3:::${PipelineArtifactsBucket}'
+                  - !Sub 'arn:aws:s3:::accountmanager-${GitBranch}-pipeline-artifacts-bucket/*'
+                  - !Sub 'arn:aws:s3:::accountmanager-${GitBranch}-pipeline-artifacts-bucket'
               - Effect: Allow
                 Action:
                   - codebuild:StartBuild
-                Resource: !Ref CodeBuildProject
+                Resource: !GetAtt CodeBuildProject.Arn
               - Effect: Allow
                 Action:
                   - codestar-connections:UseConnection
-                Resource: *
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                Resource: !Sub 'arn:aws:ssm:us-east-2:${AWS::AccountId}:parameter/app/AccountManager/*'
 
 
   CodeBuildServiceRole:
@@ -177,6 +205,7 @@ Resources:
             Principal:
               Service: codebuild.amazonaws.com
             Action: sts:AssumeRole
+      RoleName: !Sub 'AccountManager-${GitBranch}-CodeBuildServiceRole'
       Policies:
         - PolicyName: CodeBuildServiceRolePolicy
           PolicyDocument:
