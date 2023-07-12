@@ -66,8 +66,8 @@ Resources:
                   - logs:PutLogEvents
                 Resource: arn:aws:logs:*:*:log-group:/aws/lambda/AccountManager:*
               - Effect: Allow
-                Principal": '*'
                 Action: lambda:InvokeFunction
+                Principal: '*'
                 Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:AccountManager'
 
   CodePipeline:
