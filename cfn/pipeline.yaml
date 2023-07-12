@@ -41,6 +41,14 @@ Resources:
       AuthType: NONE
       TargetFunctionArn: !GetAtt AccountManagerLambda.Arn
 
+  AccountManagerLambdaPermissionForURLInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref AccountManagerLambda
+      FunctionUrlAuthType: 'NONE'
+      Action: lambda:InvokeFunctionUrl
+      Principal: '*'
+
   AccountManagerLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -65,10 +73,6 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: arn:aws:logs:*:*:log-group:/aws/lambda/AccountManager:*
-              - Effect: Allow
-                Action: lambda:InvokeFunction
-                Principal: '*'
-                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:AccountManager'
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline

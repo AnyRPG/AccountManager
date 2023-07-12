@@ -47,7 +47,7 @@ Resources:
                   - codepipeline:DeletePipeline
                   - codepipeline:Get*
                   - codepipeline:Update*
-                Resource: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:AccountManager-${GitBranch}'
+                Resource: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:AccountManager-${GitBranch}*'
               - Effect: Allow
                 Action:
                   - codestar-connections:UseConnection
