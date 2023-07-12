@@ -1,3 +1,4 @@
+using Amazon.Lambda.Logging.AspNetCore;
 using AccountManager.Database;
 using AccountManager.Models;
 using AccountManager.Services;
@@ -16,17 +17,35 @@ var settings = new AccountManagerSettings();
 builder.Configuration.Bind("AccountManagerSettings", settings);
 builder.Services.AddSingleton(settings);
 
-// configure logging
-builder.Host.ConfigureLogging(logging =>
+// configure logging - console for local, lambda logger for production
+if (builder.Environment.IsProduction())
 {
-    logging.ClearProviders();
-    logging.AddConsole();
-});
+    builder.Host.ConfigureLogging(logging =>
+    {
+        logging.ClearProviders();
+        logging.AddLambdaLogger();
+    });
+} else {
+    builder.Host.ConfigureLogging(logging =>
+    {
+        logging.ClearProviders();
+        logging.AddConsole();
+    });
+}
 
 // use mysql
-builder.Services.AddDbContext<GameDbContext>(o=>
-    o.UseMySQL(builder.Configuration.GetConnectionString("Db"))
-);
+if (builder.Environment.IsProduction())
+{
+    builder.Services.AddDbContext<GameDbContext>(o =>
+        o.UseMySQL(builder.Configuration.GetConnectionString("Db"))
+    );
+} else
+{
+    builder.Services.AddDbContext<GameDbContext>(o =>
+        o.UseMySQL(builder.Configuration.GetConnectionString("Db"))
+    );
+}
+
 
 // setup controllers
 builder.Services.AddControllersWithViews();
