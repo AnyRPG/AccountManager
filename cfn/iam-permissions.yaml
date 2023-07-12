@@ -45,7 +45,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - codepipeline:DeletePipeline
-                Resource: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:pipeline/AccountManager*'
+                Resource: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:AccountManager-${GitBranch}'
               - Effect: Allow
                 Action:
                   - codestar-connections:UseConnection
@@ -71,13 +71,9 @@ Resources:
                 Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager*'
               - Effect: Allow
                 Action:
-                  - lambda:DeleteFunction
+                  - lambda:Delete*
                   - lambda:Get*
-                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/AccountManager'
-              - Effect: Allow
-                Action:
-                  - lambda:DeleteFunctionUrlConfig
-                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/AccountManager*'
+                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:AccountManager'
 
 Outputs:
 
