@@ -181,6 +181,7 @@ Resources:
             post_build:
               commands:
                 - aws s3 cp app/AccountManager/AccountManager/bin/Debug/net6.0/AccountManager.zip s3://accountmanager-master-pipeline-artifacts-bucket/AccountManager.zip
+                - aws lambda update-function-code --s3-bucket accountmanager-master-pipeline-artifacts-bucket --s3-key AccountManager.zip
           artifacts:
             files:
               - app/AccountManager/AccountManager/bin/Debug/net6.0/AccountManager.zip
