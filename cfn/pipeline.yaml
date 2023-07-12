@@ -53,6 +53,7 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      RoleName: !Sub 'AccountManager-${GitBranch}-LambdaExecutionRole'
       Policies:
         - PolicyName: MyLambdaExecutionPolicy
           PolicyDocument:
@@ -102,8 +103,9 @@ Resources:
               Configuration:
                 ActionMode: CREATE_UPDATE
                 StackName: !Sub 'AccountManager-${GitBranch}'
-                Capabilities: CAPABILITY_IAM
-                TemplatePath: 'SourceArtifact::cfn/pipeline.yaml'
+                Capabilities: CAPABILITY_IAM,CAPABILITY_NAMED_IAM
+                ParameterOverrides: !Sub '{"GitOwner": "${GitOwner}","GitRepo": "${GitRepo}","GitBranch": "${GitBranch}"}'
+                TemplatePath: 'SourceOutput::cfn/pipeline.yaml'
                 RoleArn: !GetAtt CodePipelineServiceRole.Arn
               RunOrder: 3
         - Name: BuildandDeploy
@@ -165,7 +167,9 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: codepipeline.amazonaws.com
+              Service:
+                - codepipeline.amazonaws.com
+                - cloudformation.amazonaws.com
             Action: sts:AssumeRole
       RoleName: !Sub 'AccountManager-${GitBranch}-CodePipelineServiceRole'
       Policies:
@@ -183,8 +187,17 @@ Resources:
                   - !Sub 'arn:aws:s3:::accountmanager-${GitBranch}-pipeline-artifacts-bucket'
               - Effect: Allow
                 Action:
+                  - codebuild:BatchGetProjects
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - codebuild:DeleteProject
                   - codebuild:StartBuild
                 Resource: !GetAtt CodeBuildProject.Arn
+              - Effect: Allow
+                Action:
+                  - codepipeline:DeletePipeline
+                Resource: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:pipeline/AccountManager*'
               - Effect: Allow
                 Action:
                   - codestar-connections:UseConnection
@@ -192,7 +205,28 @@ Resources:
               - Effect: Allow
                 Action:
                   - ssm:GetParameter
-                Resource: !Sub 'arn:aws:ssm:us-east-2:${AWS::AccountId}:parameter/app/AccountManager/*'
+                  - ssm:GetParameters
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/app/AccountManager/*'
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeStacks
+                  - cloudformation:UpdateStack
+                Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/AccountManager*'
+              - Effect: Allow
+                Action:
+                  - iam:DeleteRole
+                  - iam:DeleteRolePolicy
+                  - iam:PassRole
+                  - iam:UpdateAssumeRolePolicy
+                Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager*'
+              - Effect: Allow
+                Action:
+                  - lambda:DeleteFunction
+                Resource: !GetAtt AccountManagerLambda.Arn
+              - Effect: Allow
+                Action:
+                  - lambda:DeleteFunctionUrlConfig
+                Resource: !GetAtt AccountManagerLambdaURL.FunctionArn
 
 
   CodeBuildServiceRole:
