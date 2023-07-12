@@ -51,7 +51,7 @@ if (builder.Environment.IsProduction())
 builder.Services.AddControllersWithViews();
 
 // allow this app to run in a lambda
-builder.Services.AddAWSLambdaHosting(LambdaEventSource.ApplicationLoadBalancer);
+builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
 // make authentication service available to dependency injection
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
