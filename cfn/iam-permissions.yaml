@@ -51,6 +51,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - codestar-connections:UseConnection
+                  - codestar-connections:PassConnection
                 Resource: '*'
               - Effect: Allow
                 Action:
