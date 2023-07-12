@@ -63,6 +63,7 @@ Resources:
                 Action:
                   - iam:DeleteRole
                   - iam:DeleteRolePolicy
+                  - iam:DetachRolePolicy
                   - iam:Get*
                   - iam:PassRole
                   - iam:UpdateAssumeRolePolicy
@@ -72,8 +73,17 @@ Resources:
                 Action:
                   - lambda:DeleteFunction
                   - lambda:Get*
-                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/AccountManager*'
+                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/AccountManager'
               - Effect: Allow
                 Action:
                   - lambda:DeleteFunctionUrlConfig
                 Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/AccountManager*'
+
+Outputs:
+
+  CodePipelineServiceRole:
+    Description: The service role used for codepipeline
+    Value:
+      Ref: CodePipelineServiceRole
+    Export:
+       Name: !Sub 'AccountManager-${GitBranch}-CodePipelineServiceRole'

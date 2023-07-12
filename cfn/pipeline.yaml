@@ -73,7 +73,7 @@ Resources:
         Location: !Sub 'accountmanager-${GitBranch}-pipeline-artifacts-bucket'
         Type: S3
       Name: !Sub 'AccountManager-${GitBranch}'
-      RoleArn: !GetAtt CodePipelineServiceRole.Arn
+      RoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager-${GitBranch}-CodePipelineServiceRole'
       Stages:
         - Name: Source
           Actions:
@@ -90,6 +90,24 @@ Resources:
                 FullRepositoryId: !Sub '${GitOwner}/${GitRepo}'
                 BranchName: master
               RunOrder: 1
+        - Name: UpdatePipelinePermissions
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              InputArtifacts:
+                - Name: SourceOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub 'AccountManager-${GitBranch}-iam-permissions'
+                Capabilities: CAPABILITY_IAM,CAPABILITY_NAMED_IAM
+                ParameterOverrides: !Sub '{"GitBranch": "${GitBranch}"}'
+                TemplatePath: 'SourceOutput::cfn/iam-permissions.yaml'
+                RoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager-${GitBranch}-CodePipelineServiceRole'
+              RunOrder: 2
         - Name: UpdatePipeline
           Actions:
             - Name: DeployAction
@@ -106,7 +124,7 @@ Resources:
                 Capabilities: CAPABILITY_IAM,CAPABILITY_NAMED_IAM
                 ParameterOverrides: !Sub '{"GitOwner": "${GitOwner}","GitRepo": "${GitRepo}","GitBranch": "${GitBranch}"}'
                 TemplatePath: 'SourceOutput::cfn/pipeline.yaml'
-                RoleArn: !GetAtt CodePipelineServiceRole.Arn
+                RoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager-${GitBranch}-CodePipelineServiceRole'
               RunOrder: 3
         - Name: BuildandDeploy
           Actions:
@@ -122,7 +140,7 @@ Resources:
                 - Name: BuildOutput
               Configuration:
                 ProjectName: !Ref CodeBuildProject
-              RunOrder: 2
+              RunOrder: 4
 
   # PipelineArtifactsBucket:
   #   Type: AWS::S3::Bucket
