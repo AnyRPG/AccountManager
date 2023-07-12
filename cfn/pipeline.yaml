@@ -205,25 +205,25 @@ Resources:
                 Resource: '*'
               - Effect: Allow
                 Action:
-                  - ssm:GetParameter
-                  - ssm:GetParameters
+                  - ssm:Get*
                 Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/app/AccountManager/*'
               - Effect: Allow
                 Action:
-                  - cloudformation:DescribeStacks
+                  - cloudformation:Describe*
                   - cloudformation:UpdateStack
                 Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/AccountManager*'
               - Effect: Allow
                 Action:
                   - iam:DeleteRole
                   - iam:DeleteRolePolicy
-                  - iam:GetRole
+                  - iam:Get*
                   - iam:PassRole
                   - iam:UpdateAssumeRolePolicy
                 Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager*'
               - Effect: Allow
                 Action:
                   - lambda:DeleteFunction
+                  - lambda:Get*
                 Resource: !GetAtt AccountManagerLambda.Arn
               - Effect: Allow
                 Action:
