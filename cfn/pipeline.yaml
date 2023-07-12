@@ -154,7 +154,7 @@ Resources:
                 - (cd app/AccountManager/AccountManager/bin/Debug/net6.0/ && zip -r AccountManager.zip .)
             post_build:
               commands:
-                - aws s3 cp AccountManager.zip s3://accountmanager-master-pipeline-artifacts-bucket/AccountManager.zip
+                - aws s3 cp app/AccountManager/AccountManager/bin/Debug/net6.0/AccountManager.zip s3://accountmanager-master-pipeline-artifacts-bucket/AccountManager.zip
           artifacts:
             files:
               - app/AccountManager/AccountManager/bin/Debug/net6.0/AccountManager.zip
