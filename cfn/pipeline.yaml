@@ -216,6 +216,7 @@ Resources:
                 Action:
                   - iam:DeleteRole
                   - iam:DeleteRolePolicy
+                  - iam:GetRole
                   - iam:PassRole
                   - iam:UpdateAssumeRolePolicy
                 Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager*'
