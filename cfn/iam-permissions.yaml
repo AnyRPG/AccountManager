@@ -77,6 +77,7 @@ Resources:
                   - lambda:Delete*
                   - lambda:Get*
                   - lambda:Add*
+                  - lambda:Remove*
                 Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:AccountManager'
 
 Outputs:
