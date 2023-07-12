@@ -45,6 +45,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - codepipeline:DeletePipeline
+                  - codepipeline:Get*
                 Resource: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:AccountManager-${GitBranch}'
               - Effect: Allow
                 Action:

@@ -20,7 +20,7 @@ aws cloudformation deploy --template-file cfn/iam-permissions.yaml --stack-name 
 
 # DEPLOY S3 BUCKET WITH LAMBDA CODE
 echo "Deploying artifacts bucket..."
-aws cloudformation deploy --template-file cfn/artifacts-bucket.yaml --stack-name ${PRODUCT_NAME}-Artifacts-Bucket-${GIT_BRANCH} --parameter-overrides GitBranch=${GIT_BRANCH}
+aws cloudformation deploy --template-file cfn/artifacts-bucket.yaml --stack-name ${PRODUCT_NAME}-${GIT_BRANCH}-artifacts-bucket --parameter-overrides GitBranch=${GIT_BRANCH}
 
 echo "Uploading default lambda zip to bucket if missing..."
 ARTIFACT_EXISTS=$(aws s3 ls accountmanager-${GIT_BRANCH}-pipeline-artifacts-bucket)

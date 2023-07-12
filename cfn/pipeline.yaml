@@ -126,7 +126,7 @@ Resources:
                 TemplatePath: 'SourceOutput::cfn/pipeline.yaml'
                 RoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager-${GitBranch}-CodePipelineServiceRole'
               RunOrder: 3
-        - Name: BuildandDeploy
+        - Name: BuildAndDeploy
           Actions:
             - Name: BuildAction
               ActionTypeId:
