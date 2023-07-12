@@ -219,6 +219,7 @@ Resources:
                   - iam:Get*
                   - iam:PassRole
                   - iam:UpdateAssumeRolePolicy
+                  - iam:PutRolePolicy
                 Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager*'
               - Effect: Allow
                 Action:
