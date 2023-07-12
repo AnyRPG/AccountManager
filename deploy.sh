@@ -14,6 +14,10 @@ read -p "Git Branch [${GIT_BRANCH}] : " GIT_SELECTED_BRANCH
 GIT_BRANCH=${GIT_SELECTED_BRANCH:-${GIT_BRANCH}}
 echo "Using Git Branch ${GIT_BRANCH}"
 
+# DEPLOY IAM PERMISSIONS
+echo "Deploying Pipeline IAM permissions..."
+aws cloudformation deploy --template-file cfn/iam-permissions.yaml --stack-name ${PRODUCT_NAME}-${GIT_BRANCH}-iam-permissions --parameter-overrides GitBranch=${GIT_BRANCH} --capabilities CAPABILITY_IAM --capabilities CAPABILITY_NAMED_IAM
+
 # DEPLOY S3 BUCKET WITH LAMBDA CODE
 echo "Deploying artifacts bucket..."
 aws cloudformation deploy --template-file cfn/artifacts-bucket.yaml --stack-name ${PRODUCT_NAME}-Artifacts-Bucket-${GIT_BRANCH} --parameter-overrides GitBranch=${GIT_BRANCH}

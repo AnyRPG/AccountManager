@@ -1,0 +1,79 @@
+
+Parameters:
+  GitBranch:
+    Type: String
+    Description: GitHub repository branch
+
+Resources:
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+                - cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+      RoleName: !Sub 'AccountManager-${GitBranch}-CodePipelineServiceRole'
+      Policies:
+        - PolicyName: CodePipelineServiceRolePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub 'arn:aws:s3:::accountmanager-${GitBranch}-pipeline-artifacts-bucket/*'
+                  - !Sub 'arn:aws:s3:::accountmanager-${GitBranch}-pipeline-artifacts-bucket'
+              - Effect: Allow
+                Action:
+                  - codebuild:BatchGetProjects
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - codebuild:BatchGetBuilds
+                  - codebuild:DeleteProject
+                  - codebuild:StartBuild
+                  - codebuild:UpdateProject
+                Resource: !Sub 'arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/AccountManager*'
+              - Effect: Allow
+                Action:
+                  - codepipeline:DeletePipeline
+                Resource: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:pipeline/AccountManager*'
+              - Effect: Allow
+                Action:
+                  - codestar-connections:UseConnection
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - ssm:Get*
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/app/AccountManager/*'
+              - Effect: Allow
+                Action:
+                  - cloudformation:Describe*
+                  - cloudformation:UpdateStack
+                Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/AccountManager*'
+              - Effect: Allow
+                Action:
+                  - iam:DeleteRole
+                  - iam:DeleteRolePolicy
+                  - iam:Get*
+                  - iam:PassRole
+                  - iam:UpdateAssumeRolePolicy
+                  - iam:PutRolePolicy
+                Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager*'
+              - Effect: Allow
+                Action:
+                  - lambda:DeleteFunction
+                  - lambda:Get*
+                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/AccountManager*'
+              - Effect: Allow
+                Action:
+                  - lambda:DeleteFunctionUrlConfig
+                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/AccountManager*'
