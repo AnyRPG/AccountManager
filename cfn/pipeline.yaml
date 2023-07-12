@@ -193,6 +193,7 @@ Resources:
                 Action:
                   - codebuild:DeleteProject
                   - codebuild:StartBuild
+                  - codebuild:UpdateProject
                 Resource: !GetAtt CodeBuildProject.Arn
               - Effect: Allow
                 Action:
