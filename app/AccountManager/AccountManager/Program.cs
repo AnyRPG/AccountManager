@@ -1,4 +1,5 @@
 using Amazon.Lambda.Logging.AspNetCore;
+using Amazon.Extensions.Configuration.SystemsManager;
 using AccountManager.Database;
 using AccountManager.Models;
 using AccountManager.Services;
@@ -16,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 var settings = new AccountManagerSettings();
 builder.Configuration.Bind("AccountManagerSettings", settings);
 builder.Services.AddSingleton(settings);
+
+builder.Configuration.AddSystemsManager("/app/AccountManager");
 
 // configure logging - console for local, lambda logger for production
 if (builder.Environment.IsProduction())
@@ -42,7 +45,7 @@ if (builder.Environment.IsProduction())
 } else
 {
     builder.Services.AddDbContext<GameDbContext>(o =>
-        o.UseMySQL(builder.Configuration.GetConnectionString("Db"))
+        o.UseMySQL(builder.Configuration.GetConnectionString("/app/AccountManager/DatabaseConnectionString"))
     );
 }
 
@@ -51,7 +54,10 @@ if (builder.Environment.IsProduction())
 builder.Services.AddControllersWithViews();
 
 // allow this app to run in a lambda
+// use HttpApi for calling directly through lambda function URL
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
+// use ApplicationLoadBalancer for calling through an application load balancer
+//builder.Services.AddAWSLambdaHosting(LambdaEventSource.ApplicationLoadBalancer);
 
 // make authentication service available to dependency injection
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();

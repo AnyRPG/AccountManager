@@ -20,6 +20,8 @@ Create a codestar connection to monitor the github repository (if you have never
 
 Create an SSM parameter with the name `/app/AccountManager/CodestarConnectionArn` and put the arn of the codestar connection in it
 
+Create an SSM parameter with the name `/app/AccountManager/DatabaseConnectionString` and put the database connection string in it
+
 # Application Setup
 
 To install or run the application, the database must be configured.  Running the entity framework migration tool as described below will create and configure the database tables.

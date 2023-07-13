@@ -86,8 +86,7 @@ namespace AccountManager.Controllers
             try
             {
                 //logger.LogInformation("Logging in user");
-                AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-                authenticationRequest.GetRequestFromCollection(collection);
+                AuthenticationRequest authenticationRequest = new AuthenticationRequest(collection);
                 var (success, content) = authenticationService.Login(authenticationRequest, HttpContext);
                 if (!success)
                 {
