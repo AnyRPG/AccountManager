@@ -1,4 +1,5 @@
 using Amazon.Lambda.Logging.AspNetCore;
+using Amazon.AspNetCore.DataProtection.SSM;
 using AccountManager.Database;
 using AccountManager.Models;
 using AccountManager.Services;
@@ -51,6 +52,7 @@ builder.Services.AddDbContext<GameDbContext>(o =>
 );
 }
 
+// allow different instances to share the same key so cookies and login work
 if (builder.Environment.IsProduction())
 {
     builder.Services.AddDataProtection()

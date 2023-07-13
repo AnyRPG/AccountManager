@@ -76,6 +76,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - ssm:Get*
+                  - ssm:Put*
                 Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/app/AccountManager*'
 
   CodePipeline:
