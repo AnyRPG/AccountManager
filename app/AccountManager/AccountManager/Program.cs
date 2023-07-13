@@ -47,7 +47,7 @@ if (builder.Environment.IsProduction())
 if (builder.Environment.IsProduction())
 {
     builder.Services.AddDbContext<GameDbContext>(o =>
-        o.UseMySQL(builder.Configuration.GetConnectionString("/app/AccountManager/DatabaseConnectionString"))
+        o.UseMySQL(builder.Configuration["/app/AccountManager/DatabaseConnectionString"])
     );
 } else
 {
