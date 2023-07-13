@@ -1,5 +1,4 @@
 using Amazon.Lambda.Logging.AspNetCore;
-using Amazon.Extensions.Configuration.SystemsManager;
 using AccountManager.Database;
 using AccountManager.Models;
 using AccountManager.Services;
