@@ -15,16 +15,17 @@ namespace AccountManager.Controllers
     {
         private readonly GameDbContext dbContext;
         private readonly UserAccountService accountService;
-        private readonly ILogger logger;
+        private readonly ILogger<AccountController> logger;
         private readonly AccountManager.Services.IAuthenticationService authenticationService;
         private readonly AccountManagerSettings accountManagerSettings;
 
-        public AccountController(ILogger<AccountController> logger, GameDbContext dbContext, AccountManagerSettings accountManagerSettings)
+        public AccountController(ILogger<AccountController> logger, GameDbContext dbContext, AccountManagerSettings accountManagerSettings, AccountManager.Services.IAuthenticationService authenticationService)
         {
             this.dbContext = dbContext;
             this.accountManagerSettings = accountManagerSettings;
             accountService = new UserAccountService(dbContext);
-            authenticationService = new AccountManager.Services.AuthenticationService(accountManagerSettings, dbContext, logger);
+            this.authenticationService = authenticationService;
+            //authenticationService = new AccountManager.Services.AuthenticationService(accountManagerSettings, dbContext, logger);
             this.logger = logger;
         }
 

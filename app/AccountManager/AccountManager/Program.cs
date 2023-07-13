@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,12 +15,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // bind configuration data to settings class and add it for dependency injection
 var settings = new AccountManagerSettings();
+var ssmSettings = new AccountManagerSSMSettings();
 
-//if (builder.Environment.IsProduction())
-//{
-    builder.Configuration.AddSystemsManager("/app/AccountManager/");
-//}
+if (builder.Environment.IsProduction())
+{
+    builder.Configuration.AddSystemsManager("/app/AccountManager");
+}
 builder.Configuration.Bind("AccountManagerSettings", settings);
+//builder.Configuration.Bind("/app/AccountManager", ssmSettings);
+//var root = (IConfigurationRoot)builder.Configuration;
+//var debugView = root.GetDebugView();
+//Console.Write($"debug: ${debugView}");
 builder.Services.AddSingleton(settings);
 
 
@@ -46,14 +52,17 @@ if (builder.Environment.IsProduction())
 // use mysql
 if (builder.Environment.IsProduction())
 {
+    //Console.WriteLine("testing");
+    //Console.WriteLine(builder.Configuration["DatabaseConnectionString"]);
+    //Console.WriteLine($"ssm settings: {ssmSettings.DatabaseConnectionString}");
     builder.Services.AddDbContext<GameDbContext>(o =>
-        o.UseMySQL(builder.Configuration["/app/AccountManager/DatabaseConnectionString"])
+        o.UseMySQL(builder.Configuration["DatabaseConnectionString"])
     );
 } else
 {
-    builder.Services.AddDbContext<GameDbContext>(o =>
-        o.UseMySQL(builder.Configuration.GetConnectionString("Db"))
-    );
+builder.Services.AddDbContext<GameDbContext>(o =>
+    o.UseMySQL(builder.Configuration.GetConnectionString("Db"))
+);
 }
 
 

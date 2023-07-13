@@ -14,9 +14,9 @@ namespace AccountManager.Services
     {
         private readonly AccountManagerSettings accountManagerSettings;
         private readonly GameDbContext gameDbContext;
-        private readonly ILogger logger;
+        private readonly ILogger<AuthenticationService> logger;
 
-        public AuthenticationService(AccountManagerSettings accountManagerSettings, GameDbContext gameDbContext, ILogger logger)
+        public AuthenticationService(AccountManagerSettings accountManagerSettings, GameDbContext gameDbContext, ILogger<AuthenticationService> logger)
         {
             this.accountManagerSettings = accountManagerSettings;
             this.gameDbContext = gameDbContext;
