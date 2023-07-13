@@ -14,7 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // bind configuration data to settings class and add it for dependency injection
 var settings = new AccountManagerSettings();
-builder.Configuration.AddSystemsManager("/app/AccountManager/");
+
+//if (builder.Environment.IsProduction())
+//{
+    builder.Configuration.AddSystemsManager("/app/AccountManager/");
+//}
 builder.Configuration.Bind("AccountManagerSettings", settings);
 builder.Services.AddSingleton(settings);
 
@@ -43,12 +47,12 @@ if (builder.Environment.IsProduction())
 if (builder.Environment.IsProduction())
 {
     builder.Services.AddDbContext<GameDbContext>(o =>
-        o.UseMySQL(builder.Configuration.GetConnectionString("Db"))
+        o.UseMySQL(builder.Configuration.GetConnectionString("/app/AccountManager/DatabaseConnectionString"))
     );
 } else
 {
     builder.Services.AddDbContext<GameDbContext>(o =>
-        o.UseMySQL(builder.Configuration.GetConnectionString("/app/AccountManager/DatabaseConnectionString"))
+        o.UseMySQL(builder.Configuration.GetConnectionString("Db"))
     );
 }
 
