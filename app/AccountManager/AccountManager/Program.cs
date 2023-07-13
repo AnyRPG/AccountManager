@@ -15,23 +15,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // bind configuration data to settings class and add it for dependency injection
 var settings = new AccountManagerSettings();
-var ssmSettings = new AccountManagerSSMSettings();
-
 if (builder.Environment.IsProduction())
 {
     builder.Configuration.AddSystemsManager("/app/AccountManager");
 }
 builder.Configuration.Bind("AccountManagerSettings", settings);
-//builder.Configuration.Bind("/app/AccountManager", ssmSettings);
-//var root = (IConfigurationRoot)builder.Configuration;
-//var debugView = root.GetDebugView();
-//Console.Write($"debug: ${debugView}");
 builder.Services.AddSingleton(settings);
-
-
-//var configurations = new ConfigurationBuilder()
-//                        .AddSystemsManager("/app/AccountManager/")
-//                        .Build();
 
 // configure logging - console for local, lambda logger for production
 if (builder.Environment.IsProduction())
@@ -52,9 +41,6 @@ if (builder.Environment.IsProduction())
 // use mysql
 if (builder.Environment.IsProduction())
 {
-    //Console.WriteLine("testing");
-    //Console.WriteLine(builder.Configuration["DatabaseConnectionString"]);
-    //Console.WriteLine($"ssm settings: {ssmSettings.DatabaseConnectionString}");
     builder.Services.AddDbContext<GameDbContext>(o =>
         o.UseMySQL(builder.Configuration["DatabaseConnectionString"])
     );
@@ -65,6 +51,11 @@ builder.Services.AddDbContext<GameDbContext>(o =>
 );
 }
 
+if (builder.Environment.IsProduction())
+{
+    builder.Services.AddDataProtection()
+        .PersistKeysToAWSSystemsManager("/app/AccountManager/DataProtection");
+}
 
 // setup controllers
 builder.Services.AddControllersWithViews();
