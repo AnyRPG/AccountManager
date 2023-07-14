@@ -127,6 +127,9 @@ Resources:
     DependsOn: RecordSet
     Properties:
       DomainName: account.anyrpg.org
+      DomainValidationOptions:
+        - DomainName: account.anyrpg.org
+          HostedZoneId: !Ref HostedZone
       ValidationMethod: DNS
       SubjectAlternativeNames:
         - "*.account.anyrpg.org"
