@@ -14,6 +14,12 @@ read -p "Git Branch [${GIT_BRANCH}] : " GIT_SELECTED_BRANCH
 GIT_BRANCH=${GIT_SELECTED_BRANCH:-${GIT_BRANCH}}
 echo "Using Git Branch ${GIT_BRANCH}"
 
+# AUTOMATIC PARAMETERS
+DEFAULT_VPC_ID=$(aws ec2 describe-vpcs \
+    --filters Name=isDefault,Values=true \
+    --query 'Vpcs[*].VpcId' \
+    --output text)
+
 # DEPLOY IAM PERMISSIONS
 echo "Deploying Pipeline IAM permissions..."
 aws cloudformation deploy --template-file cfn/iam-permissions.yaml --stack-name ${PRODUCT_NAME}-${GIT_BRANCH}-iam-permissions --parameter-overrides GitBranch=${GIT_BRANCH} --capabilities CAPABILITY_IAM --capabilities CAPABILITY_NAMED_IAM
@@ -35,4 +41,4 @@ fi
 
 # DEPLOY PIPELINE
 echo "Deploying pipeline..."
-aws cloudformation deploy --template-file cfn/pipeline.yaml --stack-name ${PRODUCT_NAME}-${GIT_BRANCH} --parameter-overrides GitBranch=${GIT_BRANCH} GitOwner=${GIT_OWNER} GitRepo=${GIT_REPO} --capabilities CAPABILITY_IAM --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation deploy --template-file cfn/pipeline.yaml --stack-name ${PRODUCT_NAME}-${GIT_BRANCH} --parameter-overrides GitBranch=${GIT_BRANCH} GitOwner=${GIT_OWNER} GitRepo=${GIT_REPO} VpcId=${DEFAULT_VPC_ID} --capabilities CAPABILITY_IAM --capabilities CAPABILITY_NAMED_IAM

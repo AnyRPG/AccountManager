@@ -9,6 +9,9 @@ Parameters:
   GitRepo:
     Type: String
     Description: GitHub repository name
+  VpcId:
+    Type: String
+    Description: The ID the VPC to put the load balancer security group in
   CodestarConnectionArn:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /app/AccountManager/CodestarConnectionArn
@@ -107,6 +110,7 @@ Resources:
     Properties:
       GroupName: AccountManagerLoadBalancerSecurityGroup
       GroupDescription: Allow HTTP and HTTPS traffic
+      VpcId: VpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
@@ -226,7 +230,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Sub 'AccountManager-${GitBranch}'
                 Capabilities: CAPABILITY_IAM,CAPABILITY_NAMED_IAM
-                ParameterOverrides: !Sub '{"GitOwner": "${GitOwner}","GitRepo": "${GitRepo}","GitBranch": "${GitBranch}"}'
+                ParameterOverrides: !Sub '{"GitOwner": "${GitOwner}","GitRepo": "${GitRepo}","GitBranch": "${GitBranch}","VpcId": "${VpcId}"}'
                 TemplatePath: 'SourceOutput::cfn/pipeline.yaml'
                 RoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager-${GitBranch}-CodePipelineServiceRole'
               RunOrder: 3
