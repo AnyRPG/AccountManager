@@ -25,19 +25,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - s3:GetObject
-                  - s3:PutObject
-                  - s3:ListBucket
-                Resource:
-                  - !Sub 'arn:aws:s3:::accountmanager-${GitBranch}-pipeline-artifacts-bucket/*'
-                  - !Sub 'arn:aws:s3:::accountmanager-${GitBranch}-pipeline-artifacts-bucket'
-              - Effect: Allow
-                Action:
                   - codebuild:BatchGetProjects
-                Resource: '*'
-              - Effect: Allow
-                Action:
-                  - ec2:DescribeSecurityGroups
                 Resource: '*'
               - Effect: Allow
                 Action:
@@ -59,13 +47,19 @@ Resources:
                 Resource: '*'
               - Effect: Allow
                 Action:
-                  - ssm:Get*
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/app/AccountManager/*'
-              - Effect: Allow
-                Action:
                   - cloudformation:Describe*
                   - cloudformation:UpdateStack
                 Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/AccountManager*'
+              - Effect: Allow
+                Action:
+                  - ec2:Describe*
+                  - ec2:Create*
+                  - ec2:DeleteSecurityGroup
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - elasticloadbalancing:DescribeTargetGroups
+                Resource: '*'
               - Effect: Allow
                 Action:
                   - iam:DeleteRole
@@ -83,6 +77,23 @@ Resources:
                   - lambda:Add*
                   - lambda:Remove*
                 Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:AccountManager'
+              - Effect: Allow
+                Action:
+                  - route53:Create*
+                  - route53:List*
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub 'arn:aws:s3:::accountmanager-${GitBranch}-pipeline-artifacts-bucket/*'
+                  - !Sub 'arn:aws:s3:::accountmanager-${GitBranch}-pipeline-artifacts-bucket'
+              - Effect: Allow
+                Action:
+                  - ssm:Get*
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/app/AccountManager/*'
 
 Outputs:
 

@@ -11,7 +11,7 @@ Parameters:
     Description: GitHub repository name
   VpcId:
     Type: String
-    Description: The ID the VPC to put the load balancer security group in
+    Description: The Id of the VPC to put the load balancer security group in
   CodestarConnectionArn:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /app/AccountManager/CodestarConnectionArn
@@ -109,7 +109,7 @@ Resources:
     Properties:
       GroupName: AccountManagerLoadBalancerSecurityGroup
       GroupDescription: Allow HTTP and HTTPS traffic
-      VpcId: VpcId
+      VpcId: !Ref VpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
