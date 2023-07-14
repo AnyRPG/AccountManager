@@ -161,15 +161,15 @@ Resources:
     Properties:
       Name: account.anyrpg.org.
 
-  RecordSet:
-    Type: AWS::Route53::RecordSet
-    Properties:
-      HostedZoneId: !Ref HostedZone
-      Name: account.anyrpg.org.
-      Type: A
-      AliasTarget:
-        DNSName: !GetAtt AccountManagerLoadBalancer.DNSName
-        HostedZoneId: !GetAtt AccountManagerLoadBalancer.CanonicalHostedZoneID
+  # RecordSet:
+  #   Type: AWS::Route53::RecordSet
+  #   Properties:
+  #     HostedZoneId: !Ref HostedZone
+  #     Name: account.anyrpg.org.
+  #     Type: A
+  #     AliasTarget:
+  #       DNSName: !GetAtt AccountManagerLoadBalancer.DNSName
+  #       HostedZoneId: !GetAtt AccountManagerLoadBalancer.CanonicalHostedZoneID
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline

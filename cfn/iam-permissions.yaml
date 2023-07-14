@@ -25,6 +25,10 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+                  - acm:RequestCertificate
+                Resource: !Sub 'arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/*'
+              - Effect: Allow
+                Action:
                   - codebuild:BatchGetProjects
                 Resource: '*'
               - Effect: Allow
