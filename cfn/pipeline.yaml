@@ -79,6 +79,97 @@ Resources:
                   - ssm:Put*
                 Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/app/AccountManager*'
 
+  AccountManagerLambdaTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: AccountManagerLambdaTargetGroup
+      Port: 80
+      Protocol: HTTP
+      TargetType: lambda
+      Targets:
+        - Id: AccountManagerLambda
+          Arn: !GetAtt AccountManagerLambda.Arn
+
+  AccountManagerLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: AccountManagerLoadBalancer
+      Scheme: internet-facing
+      Subnets:
+        - subnet-ea7bea8e # in us-west-2 az1
+        - subnet-174fe761 # in us-west-2 az2
+      Type: application
+      SecurityGroups:
+        - !Ref AccountManagerLoadBalancerSecurityGroup
+
+  AccountManagerLoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: AccountManagerLoadBalancerSecurityGroup
+      GroupDescription: Allow HTTP and HTTPS traffic
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0        
+
+
+  AccountManagerCertificate:
+    Type: AWS::CertificateManager::Certificate
+    DependsOn: RecordSet
+    Properties:
+      DomainName: account.anyrpg.org
+      ValidationMethod: DNS
+      SubjectAlternativeNames:
+        - "*.account.anyrpg.org"
+
+  HttpsListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref AccountManagerLoadBalancer
+      Protocol: HTTPS
+      Port: 443
+      DefaultActions:
+        - Type: "forward"
+          TargetGroupArn: !Ref AccountManagerLambdaTargetGroup
+      Certificates:
+        - CertificateArn: !Ref AccountManagerCertificate
+
+  HttpListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref AccountManagerLoadBalancer
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: '443'
+            StatusCode: HTTP_301
+
+  HostedZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: account.anyrpg.org.
+
+  RecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZone
+      Name: account.anyrpg.org.
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt AccountManagerLoadBalancer.DNSName
+#        HostedZoneId: !GetAtt AccountManagerLoadBalancer.CanonicalHostedZoneId
+
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
