@@ -59,6 +59,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - elasticloadbalancing:DescribeTargetGroups
+                  - elasticloadbalancing:CreateTargetGroup
                 Resource: '*'
               - Effect: Allow
                 Action:
@@ -81,6 +82,8 @@ Resources:
                 Action:
                   - route53:Create*
                   - route53:List*
+                  - route53:DeleteHostedZone
+                  - route53:Get*
                 Resource: '*'
               - Effect: Allow
                 Action:
