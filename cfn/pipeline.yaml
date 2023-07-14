@@ -122,14 +122,14 @@ Resources:
           CidrIp: 0.0.0.0/0        
 
 
-  # AccountManagerCertificate:
-  #   Type: AWS::CertificateManager::Certificate
-  #   DependsOn: RecordSet
-  #   Properties:
-  #     DomainName: account.anyrpg.org
-  #     ValidationMethod: DNS
-  #     SubjectAlternativeNames:
-  #       - "*.account.anyrpg.org"
+  AccountManagerCertificate:
+    Type: AWS::CertificateManager::Certificate
+    DependsOn: RecordSet
+    Properties:
+      DomainName: account.anyrpg.org
+      ValidationMethod: DNS
+      SubjectAlternativeNames:
+        - "*.account.anyrpg.org"
 
   # HttpsListener:
   #   Type: AWS::ElasticLoadBalancingV2::Listener
