@@ -55,6 +55,7 @@ Resources:
                   - ec2:Describe*
                   - ec2:Create*
                   - ec2:DeleteSecurityGroup
+                  - ec2:RevokeSecurityGroupEgress
                 Resource: '*'
               - Effect: Allow
                 Action:
