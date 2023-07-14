@@ -68,6 +68,10 @@ Resources:
                 Resource: '*'
               - Effect: Allow
                 Action:
+                  - elasticloadbalancing:DeleteLoadBalancer
+                Resource: !Sub 'arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:loadbalancer/app/AccountManagerLoadBalancer*'
+              - Effect: Allow
+                Action:
                   - iam:DeleteRole
                   - iam:DeleteRolePolicy
                   - iam:DetachRolePolicy
