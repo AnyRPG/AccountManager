@@ -86,7 +86,6 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Name: AccountManagerLambdaTargetGroup
-      Protocol: HTTP
       TargetType: lambda
       Targets:
         - Id: !GetAtt AccountManagerLambda.Arn
