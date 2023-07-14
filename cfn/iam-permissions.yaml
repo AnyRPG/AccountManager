@@ -62,7 +62,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - elasticloadbalancing:Describe*
-                  - elasticloadbalancing:CreateTargetGroup
+                  - elasticloadbalancing:Create*
                   - elasticloadbalancing:DeleteTargetGroup
                 Resource: '*'
               - Effect: Allow
