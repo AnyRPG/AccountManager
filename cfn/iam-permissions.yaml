@@ -72,6 +72,10 @@ Resources:
                 Resource: !Sub 'arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:loadbalancer/app/AccountManagerLoadBalancer*'
               - Effect: Allow
                 Action:
+                  - elasticloadbalancing:DeleteListener
+                Resource: !Sub 'arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:listener/app/AccountManagerLoadBalancer*'
+              - Effect: Allow
+                Action:
                   - iam:DeleteRole
                   - iam:DeleteRolePolicy
                   - iam:DetachRolePolicy
@@ -93,6 +97,7 @@ Resources:
                   - route53:List*
                   - route53:DeleteHostedZone
                   - route53:Get*
+                  - route53:ChangeResourceRecordSets
                 Resource: '*'
               - Effect: Allow
                 Action:

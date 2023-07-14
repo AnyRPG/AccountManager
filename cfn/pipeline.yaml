@@ -169,7 +169,7 @@ Resources:
       Type: A
       AliasTarget:
         DNSName: !GetAtt AccountManagerLoadBalancer.DNSName
-        HostedZoneId: !GetAtt AccountManagerLoadBalancer.CanonicalHostedZoneId
+        HostedZoneId: !GetAtt AccountManagerLoadBalancer.CanonicalHostedZoneID
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
