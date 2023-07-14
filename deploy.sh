@@ -1,7 +1,13 @@
 #! /bin/bash
 
+
+# SET DEFAULT VALUES
 PRODUCT_NAME="AccountManager"
 GIT_BRANCH=`git branch --show-current`
+DEFAULT_VPC_ID=$(aws ec2 describe-vpcs \
+    --filters Name=isDefault,Values=true \
+    --query 'Vpcs[*].VpcId' \
+    --output text)
 
 # GET PARAMETERS FROM THE USER
 read -p "Git Owner [AnyRPG] : " GIT_OWNER
@@ -13,12 +19,9 @@ echo "Using Git Repo ${GIT_REPO}"
 read -p "Git Branch [${GIT_BRANCH}] : " GIT_SELECTED_BRANCH
 GIT_BRANCH=${GIT_SELECTED_BRANCH:-${GIT_BRANCH}}
 echo "Using Git Branch ${GIT_BRANCH}"
-
-# AUTOMATIC PARAMETERS
-DEFAULT_VPC_ID=$(aws ec2 describe-vpcs \
-    --filters Name=isDefault,Values=true \
-    --query 'Vpcs[*].VpcId' \
-    --output text)
+read -p "VPC Id [${DEFAULT_VPC_ID}] : " VPC_ID
+VPC_ID=${VPC_ID:-${DEFAULT_VPC_ID}}
+echo "Using VpcId ${DEFAULT_VPC_ID}"
 
 # DEPLOY IAM PERMISSIONS
 echo "Deploying Pipeline IAM permissions..."

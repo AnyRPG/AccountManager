@@ -90,8 +90,7 @@ Resources:
       Protocol: HTTP
       TargetType: lambda
       Targets:
-        - Id: AccountManagerLambda
-          Arn: !GetAtt AccountManagerLambda.Arn
+        - Id: !GetAtt AccountManagerLambda.Arn
 
   AccountManagerLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
