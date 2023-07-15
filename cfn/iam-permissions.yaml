@@ -82,7 +82,7 @@ Resources:
                 Resource: !Sub 'arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:listener/app/AccountManagerLoadBalancer*'
               - Effect: Allow
                 Action:
-                  - elasticloadbalancing:ModifyTargetGroup
+                  - elasticloadbalancing:ModifyTargetGroup*
                 Resource: !Sub 'arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:targetgroup/AccountManagerLambdaTargetGroup*'
               - Effect: Allow
                 Action:
