@@ -279,15 +279,15 @@ Resources:
                 dotnet: 6.0
             build:
               commands:
-                - dotnet build app/AccountManager/AccountManager/AccountManager.csproj
-                - (cd app/AccountManager/AccountManager/bin/Debug/net6.0/ && zip -r AccountManager.zip .)
+                - dotnet publish app/AccountManager/AccountManager/AccountManager.csproj
+                - (cd app/AccountManager/AccountManager/bin/Debug/net6.0/publish/ && zip -r AccountManager.zip .)
             post_build:
               commands:
-                - aws s3 cp app/AccountManager/AccountManager/bin/Debug/net6.0/AccountManager.zip s3://accountmanager-master-pipeline-artifacts-bucket/AccountManager.zip
+                - aws s3 cp app/AccountManager/AccountManager/bin/Debug/net6.0/publish/AccountManager.zip s3://accountmanager-master-pipeline-artifacts-bucket/AccountManager.zip
                 - aws lambda update-function-code --function-name AccountManager --s3-bucket accountmanager-master-pipeline-artifacts-bucket --s3-key AccountManager.zip
           artifacts:
             files:
-              - app/AccountManager/AccountManager/bin/Debug/net6.0/AccountManager.zip
+              - app/AccountManager/AccountManager/bin/Debug/net6.0/publish/AccountManager.zip
 
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
