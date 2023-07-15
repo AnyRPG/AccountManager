@@ -82,6 +82,10 @@ Resources:
                 Resource: !Sub 'arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:listener/app/AccountManagerLoadBalancer*'
               - Effect: Allow
                 Action:
+                  - elasticloadbalancing:ModifyTargetGroup
+                Resource: !Sub 'arn:aws:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:targetgroup/AccountManagerLambdaTargetGroup*'
+              - Effect: Allow
+                Action:
                   - iam:DeleteRole
                   - iam:DeleteRolePolicy
                   - iam:DetachRolePolicy
