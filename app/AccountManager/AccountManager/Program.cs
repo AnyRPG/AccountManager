@@ -79,8 +79,8 @@ builder.Services.AddAuthentication(opt => {
 }).AddJwtBearer(options => {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        //ValidateIssuer = true,
-        //ValidateAudience = true,
+        ValidateIssuer = false,
+        ValidateAudience = false,
         //ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         //ValidIssuer = ConfigurationManager.AppSetting["JWT:ValidIssuer"],
