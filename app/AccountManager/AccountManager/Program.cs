@@ -20,7 +20,7 @@ builder.Configuration.Bind("AccountManagerSettings", settings);
 if (builder.Environment.IsProduction())
 {
     builder.Configuration.AddSystemsManager("/app/AccountManager");
-    settings.BearerKey = builder.Configuration["/app/AccountManager/BearerKey"];
+    settings.BearerKey = builder.Configuration["BearerKey"];
 }
 builder.Services.AddSingleton(settings);
 
