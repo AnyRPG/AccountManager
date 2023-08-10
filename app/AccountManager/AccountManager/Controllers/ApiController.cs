@@ -46,7 +46,7 @@ namespace AccountManager.Controllers
             } catch (Exception e)
             {
                 logger.LogError(e.Message);
-                return BadRequest($"Error Occured: {e.Message}");
+                return BadRequest("Error occured on server.  See server logs for more details.");
             }
         }
 
