@@ -45,6 +45,7 @@ namespace AccountManager.Controllers
                 return Ok(new AuthenticationResponse() { Token = content });
             } catch (Exception e)
             {
+                logger.LogError(e.Message);
                 return BadRequest($"Error Occured: {e.Message}");
             }
         }
