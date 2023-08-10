@@ -22,6 +22,8 @@ Create an SSM parameter with the name `/app/AccountManager/CodestarConnectionArn
 
 Create an SSM parameter with the name `/app/AccountManager/DatabaseConnectionString` and put the database connection string in it
 
+Create an SSM parameter with the name `/app/AccountManager/BearerKey` and put any secret string in it
+
 # Application Setup
 
 To install or run the application, the database must be configured.  Running the entity framework migration tool as described below will create and configure the database tables.

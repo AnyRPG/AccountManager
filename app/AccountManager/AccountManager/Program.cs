@@ -16,11 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // bind configuration data to settings class and add it for dependency injection
 var settings = new AccountManagerSettings();
+builder.Configuration.Bind("AccountManagerSettings", settings);
 if (builder.Environment.IsProduction())
 {
     builder.Configuration.AddSystemsManager("/app/AccountManager");
+    settings.BearerKey = builder.Configuration["/app/AccountManager/BearerKey"];
 }
-builder.Configuration.Bind("AccountManagerSettings", settings);
 builder.Services.AddSingleton(settings);
 
 // configure logging - console for local, lambda logger for production
