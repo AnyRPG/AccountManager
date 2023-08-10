@@ -43,9 +43,9 @@ namespace AccountManager.Controllers
                     return BadRequest(content);
                 }
                 return Ok(new AuthenticationResponse() { Token = content });
-            } catch
+            } catch (Exception e)
             {
-                return BadRequest("Error Occured");
+                return BadRequest($"Error Occured: {e.Message}");
             }
         }
 
