@@ -45,7 +45,7 @@ namespace AccountManager.Controllers
                 return Ok(new AuthenticationResponse() { Token = content });
             } catch (Exception e)
             {
-                logger.LogError(e.Message);
+                logger.LogError(e.ToString());
                 return BadRequest("Error occured on server.  See server logs for more details.");
             }
         }
