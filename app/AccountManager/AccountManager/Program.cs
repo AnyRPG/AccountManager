@@ -98,6 +98,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                 options.LoginPath = "/Account/Login";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
                 options.SlidingExpiration = true;
+            })
+            .AddJwtBearer(options => {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    //ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    //ValidIssuer = ConfigurationManager.AppSetting["JWT:ValidIssuer"],
+                    //ValidAudience = ConfigurationManager.AppSetting["JWT:ValidAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(settings.BearerKey))
+                };
             });
 
 var app = builder.Build();

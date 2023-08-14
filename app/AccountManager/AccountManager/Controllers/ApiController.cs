@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AccountManager.Controllers
 {
@@ -15,7 +16,7 @@ namespace AccountManager.Controllers
     public class ApiController : Controller
     {
         private readonly GameDbContext dbContext;
-        private readonly UserAccountService accountService;
+        private readonly PlayerCharacterService playerCharacterService;
         private readonly ILogger<ApiController> logger;
         private readonly AccountManager.Services.IAuthenticationService authenticationService;
         private readonly AccountManagerSettings accountManagerSettings;
@@ -24,7 +25,7 @@ namespace AccountManager.Controllers
         {
             this.dbContext = dbContext;
             this.accountManagerSettings = accountManagerSettings;
-            accountService = new UserAccountService(dbContext);
+            playerCharacterService = new PlayerCharacterService(dbContext, logger);
             this.authenticationService = authenticationService;
             //authenticationService = new AccountManager.Services.AuthenticationService(accountManagerSettings, dbContext, logger);
             this.logger = logger;
@@ -43,6 +44,37 @@ namespace AccountManager.Controllers
                     return BadRequest(content);
                 }
                 return Ok(new AuthenticationResponse() { Token = content });
+            } catch (Exception e)
+            {
+                logger.LogError(e.ToString());
+                return BadRequest("Error occured on server.  See server logs for more details.");
+            }
+        }
+
+        [HttpPost("createplayercharacter")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public ActionResult CreatePlayerCharacter(CreateCharacterRequest createCharacterRequest)
+        {
+            try
+            {
+                //logger.LogInformation("Logging in user");
+                // determine userId from JWT
+                var userIdString = User.FindFirst("id")?.Value;
+                if (userIdString == null) {
+                    return BadRequest("Could not determine User Id");
+                }
+                var userId = int.Parse(userIdString);
+
+                // for example - find user in database, then perform some validation
+                // var user = dbContext.Users.Include(u=>u.PlayerCharacters).First(u => u.Id == userId);
+                
+                // add new character
+                var success = playerCharacterService.AddPlayerCharacter(userId, createCharacterRequest);
+                if (!success)
+                {
+                    return BadRequest();
+                }
+                return Ok();
             } catch (Exception e)
             {
                 logger.LogError(e.ToString());

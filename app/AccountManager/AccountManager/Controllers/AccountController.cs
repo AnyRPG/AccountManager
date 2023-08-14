@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AccountManager.Controllers
 {
@@ -109,7 +110,7 @@ namespace AccountManager.Controllers
         }
 
         // GET: Account/Dashboard
-        [Authorize]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public ActionResult Dashboard()
         {
             ViewData["UserName"] = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
