@@ -1,5 +1,6 @@
 ﻿using AccountManager.Database;
 using AccountManager.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AccountManager.Services
 {
@@ -14,13 +15,13 @@ namespace AccountManager.Services
             this.logger = logger;
         }
 
-        public bool AddPlayerCharacter(PlayerData playerData)
+        public bool AddPlayerCharacter(PlayerCharacter playerCharacter)
         {
             //dbContext.Add(user);
-            dbContext.PlayerCharacters.Add(playerData);
+            dbContext.PlayerCharacters.Add(playerCharacter);
             dbContext.SaveChanges();
 
-            logger.LogInformation($"Added Player Character {playerData.Name} with Id {playerData.Name}");
+            logger.LogInformation($"Added Player Character {playerCharacter.Name} with Id {playerCharacter.Id}");
 
             return true;
         }
@@ -29,14 +30,19 @@ namespace AccountManager.Services
         {
 
             // add player character
-            PlayerData playerData = new PlayerData()
+            PlayerCharacter playerCharacter = new PlayerCharacter()
             {
                 AccountId = userId,
                 Name = createCharacterRequest.Name,
                 SaveData = createCharacterRequest.SaveData
             };
 
-            return AddPlayerCharacter(playerData);
+            return AddPlayerCharacter(playerCharacter);
+        }
+
+        public List<PlayerCharacter> GetPlayerCharacters(int userId)
+        {
+            return dbContext.PlayerCharacters.Where(u => u.AccountId == userId).ToList();
         }
     }
 }

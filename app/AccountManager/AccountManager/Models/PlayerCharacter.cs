@@ -1,13 +1,13 @@
 ﻿namespace AccountManager.Models
 {
-    public class PlayerData
+    public class PlayerCharacter
     {
         public int Id { get; set; }
         public int AccountId { get; set; }
         public string Name { get; set; }
         public string SaveData { get; set; }
 
-        public PlayerData() {
+        public PlayerCharacter() {
             Name = string.Empty;
             SaveData = string.Empty;
         }

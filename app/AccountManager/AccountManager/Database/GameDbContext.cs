@@ -8,6 +8,6 @@ namespace AccountManager.Database
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<PlayerData> PlayerCharacters { get; set; }
+        public DbSet<PlayerCharacter> PlayerCharacters { get; set; }
     }
 }

@@ -82,6 +82,40 @@ namespace AccountManager.Controllers
             }
         }
 
+        [HttpPost("getplayercharacters")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public ActionResult GetPlayerCharacters()
+        {
+            try
+            {
+                //logger.LogInformation("Logging in user");
+                // determine userId from JWT
+                var userIdString = User.FindFirst("id")?.Value;
+                if (userIdString == null)
+                {
+                    return BadRequest("Could not determine User Id");
+                }
+                var userId = int.Parse(userIdString);
+
+                // for example - find user in database, then perform some validation
+                // var user = dbContext.Users.Include(u=>u.PlayerCharacters).First(u => u.Id == userId);
+
+                // add new character
+                var playerCharacterList = playerCharacterService.GetPlayerCharacters(userId);
+                /*
+                if (!success)
+                {
+                    return BadRequest();
+                }
+                */
+                return Ok(playerCharacterList);
+            } catch (Exception e)
+            {
+                logger.LogError(e.ToString());
+                return BadRequest("Error occured on server.  See server logs for more details.");
+            }
+        }
+
         // GET: Account/logout
         /*
         public ActionResult Logout()
