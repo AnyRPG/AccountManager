@@ -102,14 +102,14 @@ namespace AccountManager.Controllers
                 // var user = dbContext.Users.Include(u=>u.PlayerCharacters).First(u => u.Id == userId);
 
                 // get list of characters
-                var playerCharacterListResponse = playerCharacterService.GetPlayerCharacters(userId);
+                PlayerCharacterListResponse playerCharacterListResponse = playerCharacterService.GetPlayerCharacters(userId);
                 /*
                 if (!success)
                 {
                     return BadRequest();
                 }
                 */
-                return Ok(playerCharacterListResponse.ToJson());
+                return Ok(playerCharacterListResponse);
             } catch (Exception e)
             {
                 logger.LogError(e.ToString());
