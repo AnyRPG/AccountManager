@@ -40,9 +40,17 @@ namespace AccountManager.Services
             return AddPlayerCharacter(playerCharacter);
         }
 
-        public List<PlayerCharacter> GetPlayerCharacters(int userId)
+        public PlayerCharacterListResponse GetPlayerCharacters(int userId)
         {
-            return dbContext.PlayerCharacters.Where(u => u.AccountId == userId).ToList();
+            PlayerCharacterListResponse playerCharacterListResponse = new PlayerCharacterListResponse()
+            {
+                PlayerCharacters = dbContext.PlayerCharacters.Where(u => u.AccountId == userId).ToList()
+            };
+
+            return playerCharacterListResponse;
         }
+
     }
+
+    
 }

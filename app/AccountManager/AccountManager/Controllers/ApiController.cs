@@ -101,14 +101,14 @@ namespace AccountManager.Controllers
                 // var user = dbContext.Users.Include(u=>u.PlayerCharacters).First(u => u.Id == userId);
 
                 // add new character
-                var playerCharacterList = playerCharacterService.GetPlayerCharacters(userId);
+                var playerCharacterListResponse = playerCharacterService.GetPlayerCharacters(userId);
                 /*
                 if (!success)
                 {
                     return BadRequest();
                 }
                 */
-                return Ok(playerCharacterList);
+                return Ok(playerCharacterListResponse);
             } catch (Exception e)
             {
                 logger.LogError(e.ToString());
