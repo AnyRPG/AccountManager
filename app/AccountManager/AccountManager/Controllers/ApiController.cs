@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using NuGet.Protocol;
 
 namespace AccountManager.Controllers
 {
@@ -100,7 +101,7 @@ namespace AccountManager.Controllers
                 // for example - find user in database, then perform some validation
                 // var user = dbContext.Users.Include(u=>u.PlayerCharacters).First(u => u.Id == userId);
 
-                // add new character
+                // get list of characters
                 var playerCharacterListResponse = playerCharacterService.GetPlayerCharacters(userId);
                 /*
                 if (!success)
@@ -108,7 +109,7 @@ namespace AccountManager.Controllers
                     return BadRequest();
                 }
                 */
-                return Ok(playerCharacterListResponse);
+                return Ok(playerCharacterListResponse.ToJson());
             } catch (Exception e)
             {
                 logger.LogError(e.ToString());
