@@ -40,6 +40,28 @@ namespace AccountManager.Services
             return AddPlayerCharacter(playerCharacter);
         }
 
+        public bool SavePlayerCharacter(int userId, SaveCharacterRequest saveCharacterRequest)
+        {
+            var playerCharacter = dbContext.PlayerCharacters.First(u => u.AccountId == userId && u.Id == saveCharacterRequest.Id);
+            if (playerCharacter.Name != saveCharacterRequest.Name)
+            {
+                playerCharacter.Name = saveCharacterRequest.Name;
+            }
+            playerCharacter.SaveData = saveCharacterRequest.SaveData;
+            dbContext.SaveChanges();
+
+            return true;
+        }
+
+        public bool DeletePlayerCharacter(int userId, DeleteCharacterRequest deleteCharacterRequest)
+        {
+            var playerCharacter = dbContext.PlayerCharacters.First(u => u.AccountId == userId && u.Id == deleteCharacterRequest.Id);
+            dbContext.PlayerCharacters.Remove(playerCharacter);
+            dbContext.SaveChanges();
+
+            return true;
+        }
+
         public PlayerCharacterListResponse GetPlayerCharacters(int userId)
         {
             PlayerCharacterListResponse playerCharacterListResponse = new PlayerCharacterListResponse()
