@@ -41,19 +41,20 @@ Resources:
       MemorySize: 256
       Role: !GetAtt AccountManagerLambdaExecutionRole.Arn
 
-  AccountManagerLambdaURL:
-    Type: AWS::Lambda::Url
-    Properties: 
-      AuthType: NONE
-      TargetFunctionArn: !GetAtt AccountManagerLambda.Arn
+  # AccountManagerLambdaURL:
+  #   Type: AWS::Lambda::Url
+  #   Properties: 
+  #     AuthType: NONE
+  #     TargetFunctionArn: !GetAtt AccountManagerLambda.Arn
 
   AccountManagerLambdaPermissionForURLInvoke:
     Type: AWS::Lambda::Permission
     Properties:
       FunctionName: !Ref AccountManagerLambda
-      FunctionUrlAuthType: 'NONE'
-      Action: lambda:InvokeFunctionUrl
-      Principal: '*'
+#      FunctionUrlAuthType: 'NONE'
+#      Action: lambda:InvokeFunctionUrl
+      Action: lambda:InvokeFunction
+      Principal: elasticloadbalancing.amazonaws.com
 
   AccountManagerLambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -86,6 +87,8 @@ Resources:
                 Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/app/AccountManager*'
 
   AccountManagerLambdaTargetGroup:
+    DependsOn:
+      - AccountManagerLambdaPermissionForURLInvoke
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Name: AccountManagerLambdaTargetGroup
