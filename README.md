@@ -1,7 +1,7 @@
 # Introduction
 
 AccountManager is a .net core 6 web application designed to run on AWS in a lambda to keep costs low by taking advantage of the AWS free tier.
-It allows users to go to a web site and create accounts that will eventually be used to log into an AnyRPG network server.
+It allows users to go to a web site and create accounts that can be used to log into an AnyMMO network server.
 
 # Project Organization
 

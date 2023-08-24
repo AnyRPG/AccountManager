@@ -132,13 +132,13 @@ Resources:
     Type: AWS::CertificateManager::Certificate
     DependsOn: RecordSet
     Properties:
-      DomainName: !sub 'account.${DomainName}'
+      DomainName: !Sub 'account.${DomainName}'
       DomainValidationOptions:
-        - DomainName: !sub 'account.${DomainName}'
+        - DomainName: !Sub 'account.${DomainName}'
           HostedZoneId: !Ref HostedZone
       ValidationMethod: DNS
       SubjectAlternativeNames:
-        - !sub "*.account.${DomainName}"
+        - !Sub "*.account.${DomainName}"
 
   HttpsListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -168,13 +168,13 @@ Resources:
   HostedZone:
     Type: AWS::Route53::HostedZone
     Properties:
-      Name: !sub 'account.${DomainName}.'
+      Name: !Sub 'account.${DomainName}.'
 
   RecordSet:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId: !Ref HostedZone
-      Name: !sub 'account.${DoaminName}.'
+      Name: !Sub 'account.${DoaminName}.'
       Type: A
       AliasTarget:
         DNSName: !GetAtt AccountManagerLoadBalancer.DNSName
