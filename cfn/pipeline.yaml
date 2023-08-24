@@ -12,6 +12,9 @@ Parameters:
   VpcId:
     Type: String
     Description: The Id of the VPC to put the load balancer security group in
+  DomainName:
+    Type: String
+    Description: The base domain name that will be used for the account server.  The final name will be account.domainname.com.
   CodestarConnectionArn:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /app/AccountManager/CodestarConnectionArn
@@ -129,13 +132,13 @@ Resources:
     Type: AWS::CertificateManager::Certificate
     DependsOn: RecordSet
     Properties:
-      DomainName: account.anyrpg.org
+      DomainName: !sub 'account.${DomainName}'
       DomainValidationOptions:
-        - DomainName: account.anyrpg.org
+        - DomainName: !sub 'account.${DomainName}'
           HostedZoneId: !Ref HostedZone
       ValidationMethod: DNS
       SubjectAlternativeNames:
-        - "*.account.anyrpg.org"
+        - !sub "*.account.${DomainName}"
 
   HttpsListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -165,13 +168,13 @@ Resources:
   HostedZone:
     Type: AWS::Route53::HostedZone
     Properties:
-      Name: account.anyrpg.org.
+      Name: !sub 'account.${DomainName}.'
 
   RecordSet:
     Type: AWS::Route53::RecordSet
     Properties:
       HostedZoneId: !Ref HostedZone
-      Name: account.anyrpg.org.
+      Name: !sub 'account.${DoaminName}.'
       Type: A
       AliasTarget:
         DNSName: !GetAtt AccountManagerLoadBalancer.DNSName
@@ -233,7 +236,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Sub 'AccountManager-${GitBranch}'
                 Capabilities: CAPABILITY_IAM,CAPABILITY_NAMED_IAM
-                ParameterOverrides: !Sub '{"GitOwner": "${GitOwner}","GitRepo": "${GitRepo}","GitBranch": "${GitBranch}","VpcId": "${VpcId}"}'
+                ParameterOverrides: !Sub '{"GitOwner": "${GitOwner}","GitRepo": "${GitRepo}","GitBranch": "${GitBranch}","VpcId": "${VpcId}","DomainName": "${DomainName}"}'
                 TemplatePath: 'SourceOutput::cfn/pipeline.yaml'
                 RoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/AccountManager-${GitBranch}-CodePipelineServiceRole'
               RunOrder: 3

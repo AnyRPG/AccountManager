@@ -22,6 +22,10 @@ echo "Using Git Branch ${GIT_BRANCH}"
 read -p "VPC Id [${DEFAULT_VPC_ID}] : " VPC_ID
 VPC_ID=${VPC_ID:-${DEFAULT_VPC_ID}}
 echo "Using VpcId ${DEFAULT_VPC_ID}"
+read -p "Domain name [anymmo.org] : " DOMAIN_NAME
+DOMAIN_NAME=${DOMAIN_NAME:-anymmo.org}
+echo "Using Domain Name ${DOMAIN_NAME}"
+
 
 # DEPLOY IAM PERMISSIONS
 echo "Deploying Pipeline IAM permissions..."
@@ -44,4 +48,4 @@ fi
 
 # DEPLOY PIPELINE
 echo "Deploying pipeline..."
-aws cloudformation deploy --template-file cfn/pipeline.yaml --stack-name ${PRODUCT_NAME}-${GIT_BRANCH} --parameter-overrides GitBranch=${GIT_BRANCH} GitOwner=${GIT_OWNER} GitRepo=${GIT_REPO} VpcId=${DEFAULT_VPC_ID} --capabilities CAPABILITY_IAM --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation deploy --template-file cfn/pipeline.yaml --stack-name ${PRODUCT_NAME}-${GIT_BRANCH} --parameter-overrides GitBranch=${GIT_BRANCH} GitOwner=${GIT_OWNER} GitRepo=${GIT_REPO} VpcId=${DEFAULT_VPC_ID} DomainName=${DOMAIN_NAME} --capabilities CAPABILITY_IAM --capabilities CAPABILITY_NAMED_IAM
