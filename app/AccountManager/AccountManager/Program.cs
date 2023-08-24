@@ -95,7 +95,7 @@ builder.Services.AddAuthentication(opt => {
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
-                options.LoginPath = "/Account/Login";
+                options.LoginPath = "/Home";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
                 options.SlidingExpiration = true;
             })

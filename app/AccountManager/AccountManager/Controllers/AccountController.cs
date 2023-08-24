@@ -33,7 +33,7 @@ namespace AccountManager.Controllers
         // GET: Account
         public ActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Account/Details/5
@@ -106,7 +106,7 @@ namespace AccountManager.Controllers
         public ActionResult Logout()
         {
             authenticationService.Logout(HttpContext);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Account/Dashboard
@@ -152,7 +152,7 @@ namespace AccountManager.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
             catch
             {
